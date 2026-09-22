@@ -159,6 +159,54 @@ public partial class @CameraInputAction: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 }
             ]
+        },
+        {
+            ""name"": ""Build"",
+            ""id"": ""d377d471-7236-418c-8967-c27d8cf46c0e"",
+            ""actions"": [
+                {
+                    ""name"": ""LeftClick"",
+                    ""type"": ""Button"",
+                    ""id"": ""39c11da4-4e4e-4280-b1bf-3e8ab0200320"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Rotate"",
+                    ""type"": ""Button"",
+                    ""id"": ""acb812a8-bffd-4d1d-88c4-afc73a6a7758"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""3950b1e7-ef27-40e5-8490-9ef64f240cf9"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LeftClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c0ef8487-aa36-4967-a0bf-2c13ae687659"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -166,11 +214,16 @@ public partial class @CameraInputAction: IInputActionCollection2, IDisposable
         // Camera
         m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
         m_Camera_Move = m_Camera.FindAction("Move", throwIfNotFound: true);
+        // Build
+        m_Build = asset.FindActionMap("Build", throwIfNotFound: true);
+        m_Build_LeftClick = m_Build.FindAction("LeftClick", throwIfNotFound: true);
+        m_Build_Rotate = m_Build.FindAction("Rotate", throwIfNotFound: true);
     }
 
     ~@CameraInputAction()
     {
         UnityEngine.Debug.Assert(!m_Camera.enabled, "This will cause a leak and performance issues, CameraInputAction.Camera.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Build.enabled, "This will cause a leak and performance issues, CameraInputAction.Build.Disable() has not been called.");
     }
 
     /// <summary>
@@ -338,6 +391,113 @@ public partial class @CameraInputAction: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="CameraActions" /> instance referencing this action map.
     /// </summary>
     public CameraActions @Camera => new CameraActions(this);
+
+    // Build
+    private readonly InputActionMap m_Build;
+    private List<IBuildActions> m_BuildActionsCallbackInterfaces = new List<IBuildActions>();
+    private readonly InputAction m_Build_LeftClick;
+    private readonly InputAction m_Build_Rotate;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Build".
+    /// </summary>
+    public struct BuildActions
+    {
+        private @CameraInputAction m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public BuildActions(@CameraInputAction wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Build/LeftClick".
+        /// </summary>
+        public InputAction @LeftClick => m_Wrapper.m_Build_LeftClick;
+        /// <summary>
+        /// Provides access to the underlying input action "Build/Rotate".
+        /// </summary>
+        public InputAction @Rotate => m_Wrapper.m_Build_Rotate;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Build; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="BuildActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(BuildActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="BuildActions" />
+        public void AddCallbacks(IBuildActions instance)
+        {
+            if (instance == null || m_Wrapper.m_BuildActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_BuildActionsCallbackInterfaces.Add(instance);
+            @LeftClick.started += instance.OnLeftClick;
+            @LeftClick.performed += instance.OnLeftClick;
+            @LeftClick.canceled += instance.OnLeftClick;
+            @Rotate.started += instance.OnRotate;
+            @Rotate.performed += instance.OnRotate;
+            @Rotate.canceled += instance.OnRotate;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="BuildActions" />
+        private void UnregisterCallbacks(IBuildActions instance)
+        {
+            @LeftClick.started -= instance.OnLeftClick;
+            @LeftClick.performed -= instance.OnLeftClick;
+            @LeftClick.canceled -= instance.OnLeftClick;
+            @Rotate.started -= instance.OnRotate;
+            @Rotate.performed -= instance.OnRotate;
+            @Rotate.canceled -= instance.OnRotate;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="BuildActions.UnregisterCallbacks(IBuildActions)" />.
+        /// </summary>
+        /// <seealso cref="BuildActions.UnregisterCallbacks(IBuildActions)" />
+        public void RemoveCallbacks(IBuildActions instance)
+        {
+            if (m_Wrapper.m_BuildActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="BuildActions.AddCallbacks(IBuildActions)" />
+        /// <seealso cref="BuildActions.RemoveCallbacks(IBuildActions)" />
+        /// <seealso cref="BuildActions.UnregisterCallbacks(IBuildActions)" />
+        public void SetCallbacks(IBuildActions instance)
+        {
+            foreach (var item in m_Wrapper.m_BuildActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_BuildActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="BuildActions" /> instance referencing this action map.
+    /// </summary>
+    public BuildActions @Build => new BuildActions(this);
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Camera" which allows adding and removing callbacks.
     /// </summary>
@@ -352,5 +512,27 @@ public partial class @CameraInputAction: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMove(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Build" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="BuildActions.AddCallbacks(IBuildActions)" />
+    /// <seealso cref="BuildActions.RemoveCallbacks(IBuildActions)" />
+    public interface IBuildActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "LeftClick" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnLeftClick(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Rotate" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRotate(InputAction.CallbackContext context);
     }
 }

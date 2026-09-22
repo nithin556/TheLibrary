@@ -8,6 +8,7 @@ public class inputHandle : MonoBehaviour
     public Vector2 inputVector { get; private set; }
     public Vector2 cancelInputVector { get; private set; }
     public event EventHandler OnCancelEvent;
+    public event EventHandler OnBuildEvent;
 
     void Awake()
     {
@@ -17,14 +18,18 @@ public class inputHandle : MonoBehaviour
     {
         cameraInputAction = new CameraInputAction();
         cameraInputAction.Camera.Enable();
+        cameraInputAction.Build.Enable();
         cameraInputAction.Camera.Move.performed += OnPressed;
         cameraInputAction.Camera.Move.canceled += Oncancelled;
+        cameraInputAction.Build.LeftClick.performed += OnBuild;
     }
     void OnDisable()
     {
         cameraInputAction.Camera.Move.performed -= OnPressed;
         cameraInputAction.Camera.Move.canceled -= Oncancelled;
+        cameraInputAction.Build.LeftClick.performed -= OnBuild;
         cameraInputAction.Camera.Disable();
+        cameraInputAction.Build.Disable();
     }
     void OnPressed(InputAction.CallbackContext context)
     {
@@ -34,5 +39,9 @@ public class inputHandle : MonoBehaviour
     {
         cancelInputVector = inputVector;
         OnCancelEvent?.Invoke(this, EventArgs.Empty);
+    }
+    void OnBuild(InputAction.CallbackContext context)
+    {
+        OnBuildEvent?.Invoke(this, EventArgs.Empty);
     }
 }
