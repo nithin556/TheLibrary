@@ -8,7 +8,7 @@ public class inputHandle : MonoBehaviour
     public Vector2 inputVector { get; private set; }
     public Vector2 cancelInputVector { get; private set; }
     public event EventHandler OnCancelEvent;
-    public event EventHandler OnBuildEvent;
+    public event EventHandler OnLeftClickEvent;
 
     void Awake()
     {
@@ -42,6 +42,6 @@ public class inputHandle : MonoBehaviour
     }
     void OnBuild(InputAction.CallbackContext context)
     {
-        OnBuildEvent?.Invoke(this, EventArgs.Empty);
+        OnLeftClickEvent?.Invoke(this, EventArgs.Empty);
     }
 }

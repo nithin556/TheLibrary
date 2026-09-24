@@ -1,0 +1,8 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/gameUI.uss?fileID=7433441132597879392&amp;guid=e768b3794f050674c94fbea6a88eede2&amp;type=3#gameUI"/>
+    <ui:VisualElement name="VisualElement" picking-mode="Ignore" style="flex-grow: 1; flex-direction: row; align-items: stretch; justify-content: center; align-self: stretch; -unity-text-align: upper-left; top: auto; left: auto; align-content: stretch;">
+        <ui:Button text="Select" selectable="false" focusable="false" icon-image="" triple-click-selects-line="false" double-click-selects-word="false" enabled="true" parse-escape-sequences="false" name="Select-Button" class="active-tool" style="position: relative; top: auto; left: auto;"/>
+        <ui:Button text="Build" selectable="false" focusable="false" icon-image="" triple-click-selects-line="false" double-click-selects-word="false" enabled="true" parse-escape-sequences="false" view-data-key="" name="Build-Button" class="active-tool" style="top: auto; left: auto;"/>
+        <ui:Button text="Destroy" selectable="true" focusable="true" icon-image="" triple-click-selects-line="false" double-click-selects-word="false" enabled="true" parse-escape-sequences="false" name="Destroy-Button" class="active-tool" style="top: auto; left: auto;"/>
+    </ui:VisualElement>
+</ui:UXML>
