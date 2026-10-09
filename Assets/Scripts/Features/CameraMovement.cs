@@ -51,7 +51,7 @@ public class CameraMovement : MonoBehaviour
             Debug.Log("zero floors");
             return;
         }
-        inputVector = inputVectorScript.cancelInputVector;
+        inputVector = inputVectorScript.CancelInputVector;
         // W
         if (inputVector.x == 0 && inputVector.y > 0 && currentY < (floors.Length - 1) && floors[currentY + 1] > 0)
         {

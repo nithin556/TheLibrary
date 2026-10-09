@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc671cba42d309547aabcffbdb6b9550, type: 3}
+  m_Name: NewPropGenerationData
+  m_EditorClassIdentifier: Assembly-CSharp::PropGenerationData
+  spawns:
+  - propPrefab: {fileID: 7463732129026806846, guid: 6c974a50a25cf7f468d142afb81737f7, type: 3}
+    instances: 5
+  - propPrefab: {fileID: 8811591742595748194, guid: fdffd154bd0ffa045bf9dd97a8a181f5, type: 3}
+    instances: 3
