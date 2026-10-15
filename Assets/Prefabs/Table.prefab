@@ -191,6 +191,7 @@ GameObject:
   - component: {fileID: 7732552938160679968}
   - component: {fileID: 7974172158537624411}
   - component: {fileID: 5833868765837787113}
+  - component: {fileID: -9082686009225725242}
   m_Layer: 7
   m_Name: Table
   m_TagString: Destructible
@@ -253,8 +254,23 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.0977192, y: 0.92245555, z: 2.5411959}
+  m_Size: {x: 1.2, y: 0.86, z: 2.55}
   m_Center: {x: -0.009421706, y: 0.40710843, z: 0.004846573}
+--- !u!114 &-9082686009225725242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7463732129026806846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0fd7244b2db351499ced265203dcbe3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Table
+  propData:
+    name: Standard Table
+    cost: 50
 --- !u!1 &8436992952261234554
 GameObject:
   m_ObjectHideFlags: 0

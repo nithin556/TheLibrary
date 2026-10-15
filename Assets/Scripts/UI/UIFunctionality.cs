@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
@@ -13,22 +12,18 @@ public class UIFunctionality : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     private VisualElement _rootElement;
     private VisualElement _displayElement;
-    private TextElement nameField;
-    private TextElement costField;
-    [SerializeField] private Cursor _cursor;
-    public enum ActiveMode
-    {
-        Select,
-        Build,
-        Destroy
-    }
+    private TextElement _nameField;
+    private TextElement _costField;
+    [SerializeField] private Cursor cursor;
+    
+    [SerializeField] private InteractionController  interactionController;
+    private Prop _currentSelectedProp;
+    private Vector2 _uiScreenCoord;
 
-    public ActiveMode selectedMode;
 
     private void Awake()
     {
         _panelRenderer = GetComponent<PanelRenderer>();
-        selectedMode = ActiveMode.Select; // Default mode
     }
 
     private void Start()
@@ -58,8 +53,8 @@ public class UIFunctionality : MonoBehaviour
         _destroyButton = root.Q<Button>("Destroy-Button");
 
         _displayElement = root.Q<VisualElement>("DetailsPanel");
-        nameField =  root.Q<TextElement>("NameField");
-        costField =  root.Q<TextElement>("CostField");
+        _nameField =  root.Q<TextElement>("NameField");
+        _costField =  root.Q<TextElement>("CostField");
 
         _selectButton.clicked += OnSelectButtonClicked;
         _buildButton.clicked += OnBuildButtonClicked;
@@ -68,32 +63,22 @@ public class UIFunctionality : MonoBehaviour
 
     private void Update()
     {
-        if (_cursor._currentSelectedProp != null)
-        {
-            TrackObjectMethod();
-        }
+        UpdateVisualElementPos();
     }
 
-    private void TrackObjectMethod()
-    {
-        var screenCoord = mainCamera.WorldToScreenPoint(_cursor._currentSelectedProp.gameObject.transform.position);
-        Vector2 uiScreenCoord = new Vector2(screenCoord.x,Screen.height - screenCoord.y);
-        _displayElement.style.position = Position.Absolute;
-        _displayElement.style.left = uiScreenCoord.x;
-        _displayElement.style.top = uiScreenCoord.y;
-    }
+
 
     private void OnSelectButtonClicked()
     {
-        selectedMode = ActiveMode.Select;
+        interactionController.SetMode(ActiveMode.Select);
     }
     private void OnBuildButtonClicked()
     {
-        selectedMode = ActiveMode.Build;
+        interactionController.SetMode(ActiveMode.Build);
     }
     private void OnDestroyButtonClicked()
     {
-        selectedMode = ActiveMode.Destroy;
+        interactionController.SetMode(ActiveMode.Destroy);
     }
 
     public VisualElement CursorOnUI()
@@ -103,15 +88,40 @@ public class UIFunctionality : MonoBehaviour
         return _rootElement?.panel?.Pick(uiPos);
     }
 
-    public void DetailsOnSelect(string nameString,string costString,Vector3 objectPosition)
+    public void DetailsOnSelect(string nameString,string costString,Prop currentSelectedProp)
     {
+        if (currentSelectedProp == null) return;
+
+        _currentSelectedProp = currentSelectedProp; // trackObject in update
+        
         _displayElement.style.display = DisplayStyle.Flex;
-        nameField.text = nameString;
-        costField.text = costString;
+        _nameField.text = "Name: "+nameString;
+        _costField.text = "Cost: "+costString;
+        
+        _uiScreenCoord =  TrackObjectMethod(currentSelectedProp.transform.position);// to avoid update frame gap 
+        
     }
     public void DetailsOnDeSelect()
     {
+        Debug.Log("Details on Deselect");
+        _currentSelectedProp = null;
         _displayElement.style.display = DisplayStyle.None;
+    }
+    private void UpdateVisualElementPos()
+    {
+        if (_currentSelectedProp)
+        {
+            _uiScreenCoord = TrackObjectMethod(_currentSelectedProp.transform.position);
+            _displayElement.style.position = Position.Absolute;
+            _displayElement.style.left = _uiScreenCoord.x;
+            _displayElement.style.top = _uiScreenCoord.y;
+        }
+    }
+    private Vector2 TrackObjectMethod(Vector3  objectPosition)
+    {
+        var screenCoord = mainCamera.WorldToScreenPoint(objectPosition);
+        Vector2 coord = new Vector2(screenCoord.x,Screen.height - screenCoord.y);
+        return  coord;
     }
 
 
